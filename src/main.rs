@@ -2,7 +2,6 @@
 // my first attempt at a discord bot written in rust, lord save us all
 
 // imports :3
-use dotenv;
 use serenity::async_trait;
 use serenity::model::channel::Message;
 use serenity::model::gateway::Ready;
@@ -15,11 +14,10 @@ struct Handler;
 // implementation of event handler so when message contents == .ping we get a pong :3
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
-        if msg.content == ".ping" {
-            if let Err(why) = msg.channel_id.say(&ctx.http, "Pong :3").await {
+        if msg.content == ".ping"
+            && let Err(why) = msg.channel_id.say(&ctx.http, "Pong :3").await {
                 println!("Error sending message: {why:?}");
             }
-        }
     }
 
     async fn ready(&self, _: Context, ready: Ready) {
