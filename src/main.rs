@@ -5,7 +5,6 @@
 use serenity::async_trait;
 use serenity::builder::EditMessage; // Required for Serenity v0.12+
 use serenity::model::channel::Message;
-use serenity::model::gateway::Ready;
 use serenity::prelude::*;
 use std::env;
 use std::time::Instant;
@@ -16,57 +15,68 @@ struct Handler;
 // implementation of event handler so when message contents == .ping we get a pong :3
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
-        if msg.content == ".ping" {
-            // start the timer
-            let start_time = Instant::now();
+        let message: &str = &msg.content;
+        if message.starts_with(".") {
+            match &message[1..] {
+                "ping" => {
+                    // start the timer
+                    let start_time = Instant::now();
 
-            // initial message :3
-            match msg.channel_id.say(&ctx.http, "Pinging.... :3").await {
-                Ok(mut response_msg) => {
-                    // calculate the time
-                    let latency = start_time.elapsed().as_millis();
-                    let new_content = format!("Pong! Latency is **{}ms** :3", latency);
+                    // initial message :3
+                    match msg.channel_id.say(&ctx.http, "Pinging.... :3").await {
+                        Ok(mut response_msg) => {
+                            // calculate the time
+                            let new_content = format!(
+                                "Pong! Latency is **{}ms** :3",
+                                start_time.elapsed().as_millis()
+                            );
 
-                    let builder = EditMessage::new().content(new_content);
-
-                    if let Err(why) = response_msg.edit(&ctx.http, builder).await {
-                        println!("Error editing the message: {why:?}");
+                            if let Err(why) = response_msg
+                                .edit(&ctx.http, EditMessage::new().content(new_content))
+                                .await
+                            {
+                                println!("Error editing the message: {why:?}");
+                            }
+                        }
+                        Err(err) => {
+                            println!("Error sending message: {err:?}");
+                        }
                     }
                 }
-                Err(why) => {
-                    println!("Error sending message: {why:?}");
+                "coinflip" => {
+                    let result = if rand::random_bool(1.0 / 2.0) {
+                        "Heads :3"
+                    } else {
+                        "Tails :3"
+                    };
+                    let _ = msg.channel_id.say(&ctx.http, result).await;
+                }
+                "hackclub" => {
+                    msg.channel_id
+                        .say(&ctx.http, "Wish me luck :3 ~ Energy out")
+                        .await
+                        .expect("Didn't send the message, no hackclub?");
+                }
+                _ => {}
+            }
+        } else {
+            // automeower :3
+            // meow list :p
+            let meows = vec!["meow", "mrow", "nya", "mrrrp", "prrr"];
+
+            // we love hardcoding our stuff
+            if msg.author.id != 1527332908287656036 {
+                // the thing that checks if message is meowing :3
+                if meows.iter().any(|e| msg.content.contains(e)) {
+                    let _ = msg.channel_id.say(&ctx.http, "meow:3c").await;
                 }
             }
         }
-
-        if msg.content == ".coinflip" {
-            let flip = rand::random();
-            let result = if flip { "Heads :3" } else { "Tails :3" };
-            let _ = msg.channel_id.say(&ctx.http, result).await;
-        }
-        if msg.content == ".hackclub" {
-            let _ = msg
-                .channel_id
-                .say(&ctx.http, "Wish me luck :3 ~ Energy out")
-                .await;
-        }
-
-        // automeower :3
-        // meow list :p
-        let meows = vec!["meow", "nya", "mrrrp", "prrr"];
-
-        if msg.author.id == 1527332908287656036 {
-        } else {
-            // the thing that checks if message is meowing :3
-            if meows.iter().any(|e| msg.content.contains(e)) {
-                let _ = msg.channel_id.say(&ctx.http, "meow:3c").await;
-            }
-        }
     }
 
-    async fn ready(&self, _: Context, ready: Ready) {
-        println!("{} is connected :3", ready.user.name)
-    }
+    // async fn ready(&self, _: Context, ready: Ready) {
+    //     println!("{} is connected :3", ready.user.name)
+    // }
 }
 
 #[tokio::main]
