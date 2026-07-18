@@ -44,6 +44,12 @@ impl EventHandler for Handler {
             let result = if flip { "Heads :3" } else { "Tails :3" };
             let _ = msg.channel_id.say(&ctx.http, result).await;
         }
+        if msg.content == ".hackclub" {
+            let _ = msg
+                .channel_id
+                .say(&ctx.http, "Wish me luck :3 ~ Energy out")
+                .await;
+        }
     }
 
     async fn ready(&self, _: Context, ready: Ready) {
