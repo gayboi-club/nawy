@@ -13,9 +13,11 @@ use std::time::Instant;
 struct Handler;
 
 #[async_trait]
-// implementation of event handler so when message contents == .ping we get a pong :3
+// implementation of event handler so when message contents == something -> then something happens
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
+        // ping command :3
+        // check if message contains ping :3
         if msg.content == ".ping" {
             // start the timer
             let start_time = Instant::now();
@@ -38,12 +40,13 @@ impl EventHandler for Handler {
                 }
             }
         }
-
+        // coinflip command :3
         if msg.content == ".coinflip" {
             let flip = rand::random();
             let result = if flip { "Heads :3" } else { "Tails :3" };
             let _ = msg.channel_id.say(&ctx.http, result).await;
         }
+        // silly reusable hackclub command to leave a message for an image :p
         if msg.content == ".hackclub" {
             let _ = msg
                 .channel_id
@@ -61,6 +64,27 @@ impl EventHandler for Handler {
             if meows.iter().any(|e| msg.content.contains(e)) {
                 let _ = msg.channel_id.say(&ctx.http, "meow:3c").await;
             }
+        }
+
+        if msg.content == ".cat" {
+            let randnum = rand::random::<u64>();
+            let randlink = format!("https://cataas.com/cat?a={}", randnum);
+            let _ = msg.channel_id.say(&ctx.http, randlink).await;
+        }
+
+        if msg.content == ".help" {
+            let _ = msg
+                .channel_id
+                .say(
+                    &ctx.http,
+                    "\
+                    List of commands :3c
+- .ping -> pings server
+- .coinflip -> does a coinflip :3
+- .cat -> returns random picture of a cat :3
+- meow -> bot will meow back :3",
+                )
+                .await;
         }
     }
 
