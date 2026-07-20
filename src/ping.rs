@@ -3,6 +3,7 @@ use serenity::all::Message;
 use serenity::builder::EditMessage;
 use std::time::Instant;
 
+// ping command to calculate latency :3
 pub async fn ping(ctx: &Context, msg: &Message) {
     // start the timer
     let start_time = Instant::now();

@@ -8,31 +8,34 @@ use serenity::model::gateway::Ready;
 use serenity::prelude::*;
 use std::env;
 struct Handler;
-use std::time::SystemTime;
 mod ping;
 use ping::ping;
+mod coinflip;
+use coinflip::coinflip;
+mod hackclub;
+use hackclub::hackclub;
+mod help;
+use help::help;
+mod randcat;
+use randcat::cat;
+mod time;
+use time::time;
 
 #[async_trait]
 // implementation of event handler so when message contents == something -> then something happens
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
-        // ping command :3
-        // check if message contains ping :3
+        // ping command
         if msg.content == ".ping" {
             ping(&ctx, &msg).await;
         }
-        // coinflip command :3
+        // coinflip command
         if msg.content == ".coinflip" {
-            let flip = rand::random();
-            let result = if flip { "Heads :3" } else { "Tails :3" };
-            let _ = msg.channel_id.say(&ctx.http, result).await;
+            coinflip(&ctx, &msg).await;
         }
-        // silly reusable hackclub command to leave a message for an image :p
+        // hackclub command
         if msg.content == ".hackclub" {
-            let _ = msg
-                .channel_id
-                .say(&ctx.http, "Wish me luck :3 ~ Energy out")
-                .await;
+            hackclub(&ctx, &msg).await;
         }
 
         // automeower :3
@@ -48,34 +51,15 @@ impl EventHandler for Handler {
         }
 
         if msg.content == ".cat" {
-            let randnum = rand::random::<u64>();
-            let randlink = format!("https://cataas.com/cat?a={}", randnum);
-            let _ = msg.channel_id.say(&ctx.http, randlink).await;
+            cat(&ctx, &msg).await;
         }
 
         if msg.content == ".help" {
-            let _ = msg
-                .channel_id
-                .say(
-                    &ctx.http,
-                    "\
-                    List of commands :3c
-- .ping -> pings server
-- .coinflip -> does a coinflip :3
-- .cat -> returns random picture of a cat :3
-- meow -> bot will meow back :3
-- time -> tells the current time :3",
-                )
-                .await;
+            help(&ctx, &msg).await;
         }
 
         if msg.content == ".time" {
-            let timenow = match SystemTime::now().duration_since(SystemTime::UNIX_EPOCH) {
-                Ok(n) => n.as_secs(),
-                Err(_) => panic!("SystemTime before UNIX EPOCH!"),
-            };
-            let timemsg = format!("The curent time is <t:{}>", timenow);
-            let _ = msg.channel_id.say(&ctx.http, timemsg).await;
+            time(&ctx, &msg).await;
         }
     }
 
