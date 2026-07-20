@@ -17,7 +17,7 @@ And also will submit this project to hackclub stardance cuz why not :3
 - [x] help (lists commands(should have done earlier tbh))
 - [ ] pingr (ping remote server)
 - [ ] info (info about the bot)
-- [ ] REFACTOR INTO ACTUALLY AN ACTUALLY USABLE BOT FRAMEWORK 
+- [x] REFACTOR INTO ACTUALLY AN ACTUALLY USABLE BOT FRAMEWORK 
 # how to run
 ```
 cargo run
